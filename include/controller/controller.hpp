@@ -18,14 +18,14 @@ public:
    *
    * @param target the target value
    */
-  virtual void setTarget(const Target &target) { this->target = target; }
+  virtual void setTarget(const Target &target) { this->m_target = target; }
 
   /**
    * @brief Get the target value of the controller
    *
    * @param target
    */
-  virtual Target getTarget() const { return target; }
+  virtual Target getTarget() const { return m_target; }
 
   /**
    * @brief Update the controller
@@ -47,6 +47,6 @@ public:
   virtual ~Controller(){};
 
 protected:
-  Target target; /** the target value of the controller */
+  Target m_target; /** the target value of the controller */
 };
 } // namespace controllers

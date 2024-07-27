@@ -11,35 +11,35 @@ template <isQuantity In, isQuantity Out> struct pidConfig {
 };
 
 template <isQuantity In, isQuantity Out> class PID : public Controller<In, In, Out> {
-        pidConfig<In, Out>& config;
-        double i = 0, perror = INFINITY;
-        Out current;
+        pidConfig<In, Out>& m_config;
+        double m_integral = 0, m_prev_error = INFINITY;
+        Out m_current;
     public:
         PID(pidConfig<In, Out>& config)
-            : config(config) {}
+            : m_config(config) {}
 
       
 
         virtual Out update(const In &input) override { // todo: test this all
-            double error = input.convert(config.inBase);
-            if (perror == INFINITY) perror = error;
-            double threshold = config.maxThreshold.convert(config.inBase);
-            double max = config.outMax.convert(config.outBase);
+            double error = (this->target - input).convert(m_config.inBase);
+            if (m_prev_error == INFINITY) m_prev_error = error;
+            double threshold = m_config.maxThreshold.convert(m_config.inBase);
+            double max = m_config.outMax.convert(m_config.outBase);
             if ((threshold != 0) && (max != 0) && (error > threshold)) {
-                current = units::copysign(config.outMax, input); // bang bang
+                m_current = units::copysign(m_config.outMax, error); // bang bang
             } else {
-                if ((error < 0) != (perror < 0)) i *= config.iCut; // cut down I if the sign of the error changes
-                else if ((config.iMax != In(0.0)) && (i >= config.iMax.convert(config.inBase)))
-                    i = std::copysign(config.iMax.convert(config.inBase), i); // cap I
-                else i += error; 
-                double output = (error * config.kP) + (i * config.kI) + ((perror - error) * config.kD);
-                perror = error;
+                if ((error < 0) != (m_prev_error < 0)) m_integral *= m_config.iCut; // cut down I if the sign of the error changes
+                else if ((m_config.iMax != In(0.0)) && (m_integral >= m_config.iMax.convert(m_config.inBase)))
+                    m_integral = std::copysign(m_config.iMax.convert(m_config.inBase), m_integral); // cap I
+                else m_integral += error; 
+                double output = (error * m_config.kP) + (m_integral * m_config.kI) + ((m_prev_error - error) * m_config.kD);
+                m_prev_error = error;
                 if (fabs(output) > max) output = std::copysign(max, error); // cap output
-                current = output * config.outBase;
+                m_current = output * m_config.outBase;
             }
-            return current;
+            return m_current;
         }
-        
+
         virtual void reset() {
 
         }
