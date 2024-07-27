@@ -41,7 +41,9 @@ template <isQuantity In, isQuantity Out> class PID : public Controller<In, In, O
         }
 
         virtual void reset() {
-
+            m_integral = 0;
+            m_prev_error = INFINITY;
+            m_current = Out(0);
         }
 };
 } // namespace jam
