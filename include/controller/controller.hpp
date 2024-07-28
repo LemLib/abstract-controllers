@@ -12,42 +12,42 @@ namespace controllers {
  * @tparam Out the type of the output
  */
 template <typename Target, typename In, typename Out> class Controller {
-public:
-  Controller(const Target target) : m_target(target) {}
-  /**
-   * @brief set the target value of the controller
-   *
-   * @param target the target value
-   */
-  virtual void setTarget(const Target &target) { this->m_target = target; }
+    public:
+        Controller(const Target target) : m_target(target) {}
 
-  /**
-   * @brief Get the target value of the controller
-   *
-   * @param target
-   */
-  virtual Target getTarget() const { return m_target; }
+        /**
+         * @brief set the target value of the controller
+         *
+         * @param target the target value
+         */
+        virtual void setTarget(const Target& target) { this->m_target = target; }
 
-  /**
-   * @brief Update the controller
-   *
-   * @param in the input to the controller
-   *
-   * @return out the output of the controller
-   */
-  virtual Out update(const In &input) = 0;
-  /**
-   * @brief reset the controller
-   *
-   */
-  virtual void reset() = 0;
-  /**
-   * @brief Destroy the Controller object
-   *
-   */
-  virtual ~Controller(){};
+        /**
+         * @brief Get the target value of the controller
+         *
+         * @param target
+         */
+        virtual Target getTarget() const { return m_target; }
 
-protected:
-  Target m_target; /** the target value of the controller */
+        /**
+         * @brief Update the controller
+         *
+         * @param in the input to the controller
+         *
+         * @return out the output of the controller
+         */
+        virtual Out update(const In& input) = 0;
+        /**
+         * @brief reset the controller
+         *
+         */
+        virtual void reset() = 0;
+        /**
+         * @brief Destroy the Controller object
+         *
+         */
+        virtual ~Controller() {};
+    protected:
+        Target m_target; /** the target value of the controller */
 };
 } // namespace controllers
