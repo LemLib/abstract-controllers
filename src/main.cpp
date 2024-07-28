@@ -9,7 +9,7 @@
  */
 void initialize() {
 	controllers::pidConfig<Length, Voltage> config{1};
-	controllers::PID<Length, Voltage> testLoop(config);
+	controllers::PID<Length, Voltage> testLoop(config, 10_in);
 }
 
 /**

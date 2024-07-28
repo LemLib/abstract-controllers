@@ -53,16 +53,16 @@ class PID : public Controller<In, In, Out> {
   Out m_current;
 
 public:
-  PID(pidConfig<In, Out> &config) : m_config(config) {}
+  PID(pidConfig<In, Out> &config, const In initial_target) : m_config(config), Controller<In, In, Out>(initial_target), m_current(0) {}
 
   virtual Out update(const In &input) override { // todo: test this all
-    double error = (this->target - input).convert(m_config.inBase);
+    double error = (this->m_target - input).convert(m_config.inBase);
     if (std::isnan(m_prev_error))
       m_prev_error = error;
-    double threshold = m_config.bbangThreshold.convert(m_config.inBase);
+    double bbThreshold = m_config.bbangThreshold.convert(m_config.inBase);
     double max = m_config.outMax.convert(m_config.outBase);
-    if ((threshold != 0) && (max != 0) && (error > threshold)) {
-      m_current = units::copysign(m_config.bbangValue, error); // bang bang
+    if ((!std::isnan(bbThreshold)) && (!std::isnan(m_config.bbangValue.internal())) && (error > bbThreshold)) {
+      m_current = units::copysign(m_config.bbangValue, Number(error)); // bang bang
     } else {
       if ((error < 0) != (m_prev_error < 0))
         m_integral *=
@@ -77,14 +77,14 @@ public:
       double output = (error * m_config.kP) + (m_integral * m_config.kI) +
                       ((m_prev_error - error) * m_config.kD);
       m_prev_error = error;
-      if (fabs(output) > max)
+      if (!std::isnan(max) && fabs(output) > max)
         output = std::copysign(max, error); // cap output
       m_current = output * m_config.outBase;
     }
     return m_current;
   }
 
-  virtual void reset() {
+  virtual void reset() override {
     m_integral = 0;
     m_prev_error = NAN;
     m_current = Out(0);

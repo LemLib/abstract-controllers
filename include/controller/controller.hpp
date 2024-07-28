@@ -13,6 +13,7 @@ namespace controllers {
  */
 template <typename Target, typename In, typename Out> class Controller {
 public:
+  Controller(const Target target) : m_target(target) {}
   /**
    * @brief set the target value of the controller
    *
