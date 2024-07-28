@@ -1,5 +1,6 @@
 #include "main.h"
 #include "controller/pid.hpp"
+#include "controller/slew.hpp"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -8,8 +9,9 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	controllers::pidConfig<Length, Voltage> config{1};
-	controllers::PID<Length, Voltage> testLoop(config, 10_in);
+	controllers::pidConfig<Length, Voltage> config{1, 2, 3};
+	controllers::PID<Length, Voltage> pid(config, 10_in);
+	controllers::Slewed<Length, Voltage> testSlewed(pid, 0.1_volt);
 }
 
 /**
