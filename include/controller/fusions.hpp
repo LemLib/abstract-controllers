@@ -7,9 +7,11 @@
 
 namespace controllers {
 
-template <typename Target, typename In, typename Out, typename = std::enable_if<Isomorphic<typeof(std::declval<Out> + std::declval<Out>), Out>>> // todo is this really necessary? Probably
+template <typename Target, typename In, typename Out,
+          typename = std::enable_if<Isomorphic<typeof(std::declval<Out> + std::declval<Out>),
+                                               Out>>> // todo is this really necessary? Probably
 class AdditiveFusionController : public Controller<Target, In, Out> {
-    static_assert(std::declval<Out>() + std::declval<Out>());
+        static_assert(std::declval<Out>() + std::declval<Out>());
         Controller<Target, In, Out>&controller1, &controller2;
         Out current;
     public:
