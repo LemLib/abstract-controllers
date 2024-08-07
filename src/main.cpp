@@ -10,8 +10,8 @@
  */
 void initialize() {
     controllers::pidConfig<Length, Voltage> config {1, 2, 3};
-    controllers::PID<Length, Voltage> pid(config, 10_in);
-    controllers::Slewed<Length, Voltage> testSlewed(pid, 0.1_volt);
+    controllers::PID pid(config, 10_in);
+    controllers::Slewed testSlewed(pid, 0.1_volt);
 }
 
 /**
