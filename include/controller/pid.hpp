@@ -83,5 +83,9 @@ template <isQuantity In, isQuantity Out> class PID : public Controller<In, In, O
             m_prev_error = NAN;
             m_current = Out(0);
         }
+
+        pidConfig<In,Out>& getConfig() {
+            return m_config;
+        }
 };
 } // namespace controllers

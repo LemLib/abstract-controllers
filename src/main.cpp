@@ -1,6 +1,15 @@
 #include "main.h"
+#include "controller/feedforward.hpp"
+#include "controller/fusions.hpp"
 #include "controller/pid.hpp"
 #include "controller/slew.hpp"
+#include "units/units.hpp"
+#include <functional>
+
+Force test(Length, controllers::Controller<Length, Length, Voltage>& a,
+           controllers::Controller<Length, Length, LinearVelocity>& b) {
+    return 0_N;
+}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -12,6 +21,13 @@ void initialize() {
     controllers::pidConfig<Length, Voltage> config {1, 2, 3};
     controllers::PID pid(config, 10_in);
     controllers::Slewed testSlewed(pid, 0.1_volt);
+    controllers::AdditiveFusionController addTest(pid, testSlewed);
+    controllers::LinearFeedForward<Voltage, LinearVelocity> ff(1_volt, 3 * m / sec / volt);
+    controllers::ChainedFusionController chainedTest(addTest, ff);
+    std::function<Force(Length, controllers::Controller<Length, Length, Voltage>&,
+                        controllers::Controller<Length, Length, LinearVelocity>&)>
+        b = test;
+    controllers::FunctionalChainedController functionalTest(addTest, chainedTest, b, 5_m);
 }
 
 /**
